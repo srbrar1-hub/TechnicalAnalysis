@@ -1,12 +1,15 @@
 library(quantmod)
 
 # Load portfolio stocks
-portfolio <- c("AAPL", "MSFT", "NVDA")
+portfolio <- scan("portfolio.txt", what = "character", quiet = TRUE)
 
+load_stock_data <- function(symbols) {
+  getSymbols(symbols,
+             from = "2007-01-03",
+             to = "2026-10-26")
+}
 # Download stock data
-getSymbols(portfolio,
-           from = "2007-01-03",
-           to = "2026-10-26")
+load_stock_data(portfolio)
 
 # Create stock data
 stock_data <- merge(Cl(AAPL), Cl(MSFT), Cl(NVDA))
@@ -27,3 +30,12 @@ quantmod::chartSeries(AAPL, theme = quantmod::chartTheme("white"), TA = "addSMA(
 quantmod::chartSeries(MSFT, theme = quantmod::chartTheme("white"), TA = "addSMA(n = 20)")
 
 quantmod::chartSeries(NVDA, theme = quantmod::chartTheme("white"), TA = "addSMA(n = 20)")
+
+
+# Portfolio Performance Analysis
+portfolio_returns <- rowMeans(returns)
+
+mean(portfolio_returns)
+sd(portfolio_returns)
+sd(portfolio_returns) * sqrt(252)
+((1 + mean(portfolio_returns))^252 - 1) * 100
